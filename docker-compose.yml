@@ -1,0 +1,60 @@
+version: '3.8'
+services:
+    postgres:
+        image: postgres:9.6
+        environment:
+            - POSTGRES_USER=airflow
+            - POSTGRES_DB=airflow
+            - POSTGRES_PASSWORD=airflow
+        logging:
+            options:
+                max-size: 10m
+                max-file: "3"
+        volumes:
+            - "alpha_airflow_db_data:/var/lib/postgresql/data"
+        ports:
+            - "5432:5432"
+
+    webserver:
+        image: alpha_airflow:2.3.4
+        restart: always
+        depends_on:
+            - postgres
+        environment:
+            - LOAD_EX=n
+            - EXECUTOR=Local
+            - POSTGRES_USER=airflow
+            - POSTGRES_DB=airflow
+            - POSTGRES_PASSWORD=airflow
+            - FERNET_KEY=WzXsqJWRlvrGTy5OU2u2g6nbgfW5FsS3IQhOfohyRzQ=
+        logging:
+            options:
+                max-size: 10m
+                max-file: "3"
+        volumes:
+            - "./dags:/usr/local/airflow/dags"
+            - "./plugins:/usr/local/airflow/plugins"
+            - "./assets:/usr/local/airflow/assets"
+        ports:
+            - "8080:8080"
+        command: webserver
+        healthcheck:
+            test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+            interval: 30s
+            timeout: 30s
+            retries: 3
+
+    datawarehouse:
+        image: postgres:13
+        environment:
+            - POSTGRES_USER=admin
+            - POSTGRES_DB=dwh
+            - POSTGRES_PASSWORD=admin
+        volumes:
+            - "dwh_db_data:/var/lib/postgresql/data"
+        ports:
+            - "5433:5432"
+
+volumes:
+  alpha_airflow_db_data:
+  dwh_db_data:
