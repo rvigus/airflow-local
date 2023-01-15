@@ -1,0 +1,1 @@
+## Airflow local setup template
