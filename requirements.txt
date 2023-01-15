@@ -1,0 +1,9 @@
+-c "https://raw.githubusercontent.com/apache/airflow/constraints-2.3.4/constraints-3.8.txt"
+apache-airflow==2.3.4
+psycopg2-binary==2.9.3
+pandas==1.4.3
+numpy==1.22.4
+requests==2.28.0
+lxml==4.9.1
+beautifulsoup4==4.11.1
+cryptography==36.0.2
